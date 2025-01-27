@@ -1,32 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:foode/models/restaurant.dart';
+import 'package:provider/provider.dart';
 
 class MyCurrentLocation extends StatelessWidget {
-  const MyCurrentLocation({super.key});
+  MyCurrentLocation({super.key});
+  final textController = TextEditingController();
 
   void openLocationSearchBox(BuildContext context) {
-    showDialog(context: context
-    , builder: (context)=> AlertDialog(
-      title: const Text("Your location"),
-      content: const TextField(
-        decoration: InputDecoration(hintText: "Search adress.."),
-      ),
-      actions: [
-        // candel button
-
-        MaterialButton(
-          onPressed: ()=> Navigator.pop(context),
-          child: const Text("Cancel"),
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Your location"),
+        content: TextField(
+          controller: textController,
+          decoration: const InputDecoration(hintText: "Enter adress.."),
         ),
-
-        //save button
+        actions: [
+          // candel button
 
           MaterialButton(
-          onPressed: ()=> Navigator.pop(context),
-          child: const Text("Save"),
-        )
+            onPressed: ()  {
+              Navigator.pop(context);
+              textController.clear();},
+            child: const Text("Cancel"),
+            
+          ),
 
-      ],
-    ),);
+          //save button
+
+          MaterialButton(
+            onPressed: () {
+              String newAddress = textController.text;
+              context.read<Restaurant>().updateDeliveryAddress(newAddress);
+              Navigator.pop(context);
+              textController.clear();
+            },
+            child: const Text("Save"),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -36,20 +49,20 @@ class MyCurrentLocation extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Deliver Now",
-          style: TextStyle(color : Theme.of(context).colorScheme.primary),),
+          Text(
+            "Deliver Now",
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
           GestureDetector(
-            onTap: () =>openLocationSearchBox(context),
+            onTap: () => openLocationSearchBox(context),
             child: Row(
               children: [
                 //adressT
-                Text("421 Baker Street, London, UK",
-                style: TextStyle(color : Theme.of(context).colorScheme.inversePrimary,
-                fontWeight: FontWeight.bold)
-                ,),
-                
+                Consumer<Restaurant>(
+                    builder: (context, restaurant, child) =>
+                        Text(restaurant.deliveryAddress)),
                 //drop downlist
-                Icon(
+                const Icon(
                   Icons.keyboard_arrow_down,
                 ),
               ],

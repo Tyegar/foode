@@ -4,17 +4,13 @@ import 'package:foode/models/food.dart';
 class MyTabBar extends StatelessWidget {
   final TabController tabController;
 
-  const MyTabBar({
-  super.key,
-  required this.tabController
-  });
+  const MyTabBar({super.key, required this.tabController});
 
-  List<Tab> _buildCategoryTabs(){
-    return FoodCategory.values.map((category)
-    {
+  List<Tab> _buildCategoryTabs() {
+    return FoodCategory.values.map((category) {
       return Tab(
         text: category.toString().split('.').last,
-        );
+      );
     }).toList();
   }
 
@@ -23,8 +19,7 @@ class MyTabBar extends StatelessWidget {
     return Container(
       child: TabBar(
         controller: tabController,
-        tabs:_buildCategoryTabs(),
-      
+        tabs: _buildCategoryTabs(),
       ),
     );
   }

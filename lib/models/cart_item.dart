@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:foode/models/food.dart';
 
 class CartItem {

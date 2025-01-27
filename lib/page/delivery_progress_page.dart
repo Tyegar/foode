@@ -1,14 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:foode/components/my_receipt.dart';
+import 'package:provider/provider.dart';
 
-class DeliveryProgressPage extends StatelessWidget {
+import '../models/restaurant.dart';
+import '../services/database/firestore.dart';
+
+class DeliveryProgressPage extends StatefulWidget {
   const DeliveryProgressPage({super.key});
 
+  @override
+  State<DeliveryProgressPage> createState() => _DeliveryProgressPageState();
+}
+
+class _DeliveryProgressPageState extends State<DeliveryProgressPage> {
+  //get acess to db
+  FirestoreService db = FirestoreService();
+  
+  @override
+  void initState() {
+    super.initState();
+    //if we get this page , submit the order to db
+    String receipt = context.read<Restaurant>().displaCartReceipt();
+    db.saveOrderToDatabase(receipt);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Delivery  in Progress..."),
+       backgroundColor: Colors.transparent,
       ),
       bottomNavigationBar: _buildBottomNavigationBar(context),
       body: const SingleChildScrollView(
@@ -38,7 +57,7 @@ class DeliveryProgressPage extends StatelessWidget {
           Container(
             //profile pic
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -73,7 +92,7 @@ class DeliveryProgressPage extends StatelessWidget {
               Container(
                 //profile pic
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).colorScheme.surface,
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
@@ -87,7 +106,7 @@ class DeliveryProgressPage extends StatelessWidget {
               Container(
                 //profile pic
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).colorScheme.surface,
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(

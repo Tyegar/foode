@@ -2,34 +2,58 @@ import 'package:flutter/material.dart';
 
 import '../components/my_button.dart';
 import '../components/my_textfield.dart';
+import '../services/auth/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
 
-  const RegisterPage({
-    super.key,
-    required this.onTap
-    });
+  const RegisterPage({super.key, required this.onTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage>{
- // text editing controller
+class _RegisterPageState extends State<RegisterPage> {
+  // text editing controller
   final TextEditingController emailTextController = TextEditingController();
   final TextEditingController passwordTextController = TextEditingController();
-  final TextEditingController confirmpasswordTextController = TextEditingController();
+  final TextEditingController confirmpasswordTextController =
+      TextEditingController();
+
+  //register method
+  void register() async {
+    //get auth service
+    final _authService = AuthService();
+    //check if the password match
+    if (passwordTextController.text == confirmpasswordTextController.text) {
+      try {
+        await _authService.signUpWithEmailPassword(
+            emailTextController.text, passwordTextController.text);
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(e.toString()),
+                ));
+      }
+    }else{
+      showDialog(
+            context: context,
+            builder: (context) => const AlertDialog(
+                  title: Text("Password don't match!"),
+                ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           //logo
           Icon(
-            Icons.lock_open_rounded,
+            Icons.delivery_dining,
             size: 100,
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
@@ -66,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage>{
             height: 10,
           ),
 
-           //confrimpass textfield
+          //confrimpass textfield
           MyTextField(
               controller: confirmpasswordTextController,
               obscureText: true,
@@ -76,9 +100,7 @@ class _RegisterPageState extends State<RegisterPage>{
           ),
 
           //sign in button
-          MyButton(
-          text: "Sign up", 
-          onTap: () {}),
+          MyButton(text: "Sign up", onTap: register),
           const SizedBox(
             height: 25,
           ),
@@ -88,17 +110,19 @@ class _RegisterPageState extends State<RegisterPage>{
             children: [
               Text(
                 "Already have an account?",
-                style: TextStyle(color:Theme.of(context).colorScheme.inversePrimary),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary),
               ),
               const SizedBox(
                 width: 4,
               ),
               GestureDetector(
-                onTap:widget.onTap,
+                onTap: widget.onTap,
                 child: Text(
                   "Login now",
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary, fontWeight: FontWeight.bold),
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontWeight: FontWeight.bold),
                 ),
               )
             ],

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:foode/components/my_textfield.dart';
 
 import '../components/my_button.dart';
+import '../services/auth/auth_service.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
-  const LoginPage({super.key,required this.onTap});
+  const LoginPage({super.key, required this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -18,25 +19,31 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordTextController = TextEditingController();
 
   //login method
-  void login (){
-    /*
-  
-    fill the auth
-
-    */
-
-    //navigate to home
-    Navigator.push(context, MaterialPageRoute(builder: (context)=> const HomePage()));
+  Future<void> login() async {
+    //get auth service
+    final _authService = AuthService();
+    //sign in
+    try {
+      await _authService.signInWithEmailPassword(
+          emailTextController.text, passwordTextController.text);
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(e.toString()),
+              ));
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           //logo
           Icon(
-            Icons.lock_open_rounded,
+            Icons.delivery_dining,
             size: 100,
             color: Theme.of(context).colorScheme.inversePrimary,
           ),
@@ -70,10 +77,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           //sign in button
-          MyButton(
-          text: "Sign in", 
-          onTap: login
-          ),
+          MyButton(text: "Sign in", onTap: login),
           const SizedBox(
             height: 25,
           ),
@@ -83,17 +87,19 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Text(
                 "Not a member?",
-                style: TextStyle(color:Theme.of(context).colorScheme.inversePrimary),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary),
               ),
               const SizedBox(
                 width: 4,
               ),
               GestureDetector(
-                onTap:widget.onTap,
+                onTap: widget.onTap,
                 child: Text(
                   "Register now",
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary, fontWeight: FontWeight.bold),
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontWeight: FontWeight.bold),
                 ),
               )
             ],
